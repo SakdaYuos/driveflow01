@@ -30,9 +30,13 @@
             @csrf
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
                 <div>
-                    <label class="form-label">Full Name *</label>
-                    <input type="text" name="name" class="form-control" value="{{ old('name') }}" placeholder="Sokha Chenda" required>
+                    <label class="form-label">Last Name *</label>
+                    <input type="text" name="name" class="form-control" value="{{ old('name') }}" placeholder="Last Name" required>
                 </div>
+                                <div>
+                    <label class="form-label">First Name *</label>
+                    <input type="text" name="name" class="form-control" value="{{ old('name') }}" placeholder="First Name" required>
+                </div>git commit -m
                 <div>
                     <label class="form-label">Phone</label>
                     <input type="text" name="phone" class="form-control" value="{{ old('phone') }}" placeholder="+855 12 345 678">

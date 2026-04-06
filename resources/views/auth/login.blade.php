@@ -62,11 +62,6 @@
             </button>
         </form>
 
-        <div style="margin-top:16px;padding:12px;background:rgba(220,38,38,0.06);border:1px solid rgba(220,38,38,0.2);font-size:12px;color:var(--white-3)">
-            <strong style="color:var(--white-2)">Demo credentials:</strong><br>
-            Admin: admin@driveflow.kh / Admin@2025<br>
-            Customer: demo@driveflow.kh / Demo@2025
-        </div>
 
         <div style="text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
             <span style="font-size:13px;color:var(--white-4)">Don't have an account?</span>

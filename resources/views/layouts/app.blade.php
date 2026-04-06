@@ -82,8 +82,8 @@
             </div>
             <div>
                 <div class="footer-heading">Contact</div>
-                <div class="footer-link">📞 +855 23 456 789</div>
-                <div class="footer-link">✉️ hello@driveflow.com</div>
+                <div class="footer-link">📞 +855 81678989</div>
+                <div class="footer-link">✉️ sakdayuos@gmail.com</div>
                 <div class="footer-link">24/7 Support</div>
             </div>
         </div>
