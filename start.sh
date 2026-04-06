@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 echo "==> Setting up DriveFlow on Railway..."
 
@@ -15,7 +14,7 @@ php artisan storage:link || true
 
 # Run migrations
 echo "==> Running migrations..."
-php artisan migrate --force
+php artisan migrate --force || true
 
 # Seed database (only if fresh)
 echo "==> Seeding database..."
