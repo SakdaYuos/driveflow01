@@ -1,0 +1,8 @@
+{
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "echo 'CSS served directly from public/ - no build needed'",
+        "dev": "echo 'CSS served directly from public/ - no build needed'"
+    }
+}
