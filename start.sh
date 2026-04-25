@@ -16,15 +16,18 @@ php artisan storage:link || true
 echo "==> Running migrations..."
 php artisan migrate --force || true
 
-# Seed database (only if fresh)
+# Seed database (errors are safe to ignore on restarts)
 echo "==> Seeding database..."
 php artisan db:seed --force || true
 
-# Clear and cache config for production
+# Clear stale caches then re-cache for production
 echo "==> Caching config..."
+php artisan config:clear || true
+php artisan route:clear  || true
+php artisan view:clear   || true
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
 echo "==> Starting PHP server on port ${PORT:-8080}..."
-exec php -S "0.0.0.0:${PORT:-8080}" -t public public/index.php
+exec php -S "0.0.0.0:${PORT:-8080}" -t public public/router.php
