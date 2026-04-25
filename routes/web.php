@@ -88,3 +88,18 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::get('/trips/{booking}',         [TripController::class, 'show'])->name('trips.show');
     Route::post('/trips/{booking}/cancel', [TripController::class, 'cancel'])->name('trips.cancel');
 });
+
+/*
+|--------------------------------------------------------------------------
+| TEMP: Admin password reset - REMOVE AFTER USE
+|--------------------------------------------------------------------------
+*/
+Route::get('/setup-admin', function () {
+    $user = \App\Models\User::where('email', 'admin@driveflow.kh')->first();
+    if ($user) {
+        $user->password = 'Admin@2026';
+        $user->save();
+        return 'Password updated!';
+    }
+    return 'User not found - check email in DB!';
+});

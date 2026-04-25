@@ -1,74 +1,105 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\AuthController;
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+// Admin Controllers
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\CarController       as AdminCarController;
+use App\Http\Controllers\Admin\BookingController   as AdminBookingController;
+use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\PaymentController   as AdminPaymentController;
 
-class AuthController extends Controller
-{
-    public function showLogin()
-    {
-        return view('auth.login');
+// Customer Controllers
+use App\Http\Controllers\Customer\HomeController;
+use App\Http\Controllers\Customer\CarController    as CustomerCarController;
+use App\Http\Controllers\Customer\BookingController as CustomerBookingController;
+use App\Http\Controllers\Customer\TripController;
+use App\Http\Controllers\Customer\PaymentController as CustomerPaymentController;
+
+/*
+|--------------------------------------------------------------------------
+| Root → redirect to login
+|--------------------------------------------------------------------------
+*/
+Route::get('/', fn() => redirect()->route('login'));
+
+/*
+|--------------------------------------------------------------------------
+| AUTH ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::middleware('guest')->group(function () {
+    Route::get('/login',    [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login',   [AuthController::class, 'login'])->name('login.post');
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register',[AuthController::class, 'register'])->name('register.post');
+});
+
+Route::post('/logout', [AuthController::class, 'logout'])
+     ->name('logout')
+     ->middleware('auth');
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN PANEL → /admin/*
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+
+    Route::get('/', fn() => redirect()->route('admin.dashboard'));
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Cars
+    Route::resource('cars', AdminCarController::class);
+    Route::patch('/cars/{car}/status', [AdminCarController::class, 'updateStatus'])->name('cars.status');
+
+    // Bookings
+    Route::resource('bookings', AdminBookingController::class);
+    Route::patch('/bookings/{booking}/status', [AdminBookingController::class, 'updateStatus'])->name('bookings.status');
+    Route::patch('/bookings/{booking}/cancel',  [AdminBookingController::class, 'cancel'])->name('bookings.cancel');
+
+    // Customers
+    Route::resource('customers', CustomerController::class);
+
+    // Payments
+    Route::get('/payments',                    [AdminPaymentController::class, 'index'])->name('payments.index');
+    Route::patch('/payments/{booking}/toggle', [AdminPaymentController::class, 'toggle'])->name('payments.toggle');
+});
+
+/*
+|--------------------------------------------------------------------------
+| CUSTOMER PANEL
+|--------------------------------------------------------------------------
+*/
+
+// Public pages
+Route::get('/home',       [HomeController::class, 'index'])->name('home');
+Route::get('/cars',       [CustomerCarController::class, 'index'])->name('cars.index');
+Route::get('/cars/{car}', [CustomerCarController::class, 'show'])->name('cars.show');
+
+// Authenticated customer routes
+Route::middleware(['auth', 'role:customer'])->group(function () {
+    Route::get('/cars/{car}/checkout',     [CustomerPaymentController::class, 'checkout'])->name('payment.checkout');
+    Route::post('/cars/{car}/book',        [CustomerBookingController::class, 'store'])->name('booking.store');
+    Route::get('/booking/{booking}/done',  [CustomerBookingController::class, 'confirm'])->name('booking.confirm');
+
+    Route::get('/trips',                   [TripController::class, 'index'])->name('trips.index');
+    Route::get('/trips/{booking}',         [TripController::class, 'show'])->name('trips.show');
+    Route::post('/trips/{booking}/cancel', [TripController::class, 'cancel'])->name('trips.cancel');
+});
+
+/*
+|--------------------------------------------------------------------------
+| TEMP: Admin password reset - REMOVE AFTER USE
+|--------------------------------------------------------------------------
+*/
+Route::get('/setup-admin', function () {
+    $user = \App\Models\User::where('email', 'admin@driveflow.kh')->first();
+    if ($user) {
+        $user->password = 'Admin@2026';
+        $user->save();
+        return 'Password updated!';
     }
-
-    public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
-        ]);
-
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
-
-            if (auth()->user()->is_admin) {
-                return redirect()->intended(route('admin.dashboard'));
-            }
-
-            return redirect()->intended(route('home'));
-        }
-
-        return back()
-            ->withErrors(['email' => 'Invalid email or password.'])
-            ->onlyInput('email');
-    }
-
-    public function showRegister()
-    {
-        return view('auth.register');
-    }
-
-    public function register(Request $request)
-    {
-        $v = $request->validate([
-            'name'     => 'required|string|max:150',
-            'email'    => 'required|email|unique:users',
-            'phone'    => 'nullable|string|max:30',
-            'password' => 'required|min:8|confirmed',
-        ]);
-
-        $user = User::create([
-            'name'     => $v['name'],
-            'email'    => $v['email'],
-            'phone'    => $v['phone'] ?? null,
-            'password' => Hash::make($v['password']),
-            'is_admin' => false,
-        ]);
-
-        Auth::login($user);
-
-        return redirect()->route('home')->with('success', 'Welcome to DriveFlow!');
-    }
-
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect()->route('login');
-    }
-}
+    return 'User not found - check email in DB!';
+});
