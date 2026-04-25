@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
                 'email'    => 'Admin@driveflow.kh',
                 'password' => Hash::make('Admin@2026'),
                 'is_admin' => true,
-                'phone'    => '+855 23 000 001',
+                'phone'    => '+855 81 678 989',
             ]
         );
 
