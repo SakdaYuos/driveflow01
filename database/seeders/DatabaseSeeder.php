@@ -24,18 +24,6 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Demo customer
-        User::updateOrCreate(
-            ['email' => 'demo@driveflow.kh'],
-            [
-                'name'     => 'Demo Customer',
-                'email'    => 'demo@driveflow.kh',
-                'password' => Hash::make('Demo@2025'),
-                'is_admin' => false,
-                'phone'    => '+855 12 345 678',
-            ]
-        );
-
         // Sample cars
         $cars = [
             [
