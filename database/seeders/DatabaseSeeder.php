@@ -17,8 +17,8 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@driveflow.kh'],
             [
                 'name'     => 'DriveFlow Admin',
-                'email'    => 'admin@driveflow.kh',
-                'password' => Hash::make('Admin@2025'),
+                'email'    => 'Admin@driveflow.kh',
+                'password' => Hash::make('Admin@2026'),
                 'is_admin' => true,
                 'phone'    => '+855 23 000 001',
             ]
